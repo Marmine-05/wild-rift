@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Wild Rift Clips</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎀</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff4f8;--card:#fff;--ink:#3b2a4a;--mute:#8a7a99;--pink:#ff8fb8;--lav:#b9a6ff;--mint:#9fe6d0;--line:#f3d6e4;--shadow:0 6px 20px rgba(255,143,184,.25);color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#1e1626;--card:#2a2036;--ink:#f6e9ff;--mute:#b7a6c9;--line:#3d2f4d;--shadow:0 6px 20px rgba(0,0,0,.4);color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Trebuchet MS",system-ui,sans-serif;min-height:100vh}
+header{text-align:center;padding:40px 16px 10px}
+h1{margin:0;font-family:"Baloo 2","Trebuchet MS",sans-serif;font-size:clamp(30px,7vw,48px);background:linear-gradient(90deg,var(--pink),var(--lav));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mute);margin:4px 0 0}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.bar{text-align:center;margin:10px 0 20px}
+.bar input{width:100%;max-width:340px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:10px 18px;font:inherit}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.card{background:var(--card);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s;border:0;padding:0;text-align:left;color:inherit;font:inherit;width:100%}
+.card:hover,.card:focus-visible{transform:translateY(-4px) rotate(-.5deg);outline:3px solid var(--lav)}
+.thumb{position:relative;aspect-ratio:16/9;background:#000}
+.thumb img,.thumb video{width:100%;height:100%;object-fit:cover;display:block}
+.play{position:absolute;inset:0;margin:auto;width:48px;height:48px;border-radius:50%;background:rgba(255,143,184,.92);display:grid;place-items:center;color:#fff;font-size:20px;padding-left:3px}
+.info{padding:12px 14px 14px}
+.info h3{margin:0 0 6px;font-size:17px}
+.tag{display:inline-block;background:var(--mint);color:#24493f;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
+.info p{margin:8px 0 0;color:var(--mute);font-size:14px}
+.empty{text-align:center;color:var(--mute);padding:50px 10px}
+dialog{border:0;border-radius:22px;padding:0;max-width:min(900px,94vw);width:100%;background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(30,10,40,.6)}
+.player{aspect-ratio:16/9;background:#000}
+.player iframe,.player video{width:100%;height:100%;border:0;display:block}
+.dinfo{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 16px}
+.dinfo h3{margin:0 0 6px}
+.dinfo p{margin:8px 0 0;color:var(--mute);font-size:14px}
+.dinfo button{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;font:inherit;font-weight:700;cursor:pointer}
+footer{text-align:center;color:var(--mute);padding:24px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <h1>✨ My Wild Rift Clips ✨</h1>
+  <p class="sub">Pentakills, outplays and the occasional oops</p>
+</header>
+<main>
+  <div class="bar"><input type="search" id="q" placeholder="Search by title or champion" aria-label="Search clips"></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>No clips yet, check back soon 💖</div>
+</main>
+<footer>Made with 💜 for Wild Rift</footer>
+<dialog id="dlg"><div class="player" id="player"></div><div class="dinfo"><div><h3 id="pt"></h3><span class="tag" id="pc"></span><p id="pd"></p></div><button id="close">Close</button></div></dialog>
+
+<script type="application/json" id="vdata">[]</script>
+<script>
+var videos = [];
+try { videos = JSON.parse(document.getElementById('vdata').textContent) || []; } catch (e) {}
+var $ = function (id) { return document.getElementById(id); };
+function fileUrl(ref) { return ref.split('/').map(encodeURIComponent).join('/'); }
+
+function render() {
+  var q = $('q').value.trim().toLowerCase();
+  var list = videos.filter(function (v) { return !q || (v.title + ' ' + (v.champ || '')).toLowerCase().indexOf(q) > -1; });
+  var grid = $('grid'); grid.textContent = '';
+  $('empty').hidden = list.length > 0;
+  list.forEach(function (v) {
+    var c = document.createElement('button'); c.className = 'card';
+    var t = document.createElement('div'); t.className = 'thumb';
+    if (v.type === 'youtube') {
+      var img = document.createElement('img'); img.loading = 'lazy'; img.alt = '';
+      img.src = 'https://i.ytimg.com/vi/' + v.ref + '/hqdefault.jpg'; t.appendChild(img);
+    } else {
+      var vid = document.createElement('video'); vid.preload = 'metadata'; vid.muted = true;
+      vid.src = fileUrl(v.ref) + '#t=0.5'; t.appendChild(vid);
+    }
+    var p = document.createElement('div'); p.className = 'play'; p.textContent = '▶'; t.appendChild(p);
+    var info = document.createElement('div'); info.className = 'info';
+    var h = document.createElement('h3'); h.textContent = v.title; info.appendChild(h);
+    if (v.champ) { var tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = v.champ; info.appendChild(tag); }
+    c.appendChild(t); c.appendChild(info);
+    c.onclick = function () { play(v); };
+    grid.appendChild(c);
+  });
+}
+
+function play(v) {
+  var box = $('player'); box.textContent = '';
+  if (v.type === 'youtube') {
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + v.ref + '?autoplay=1&rel=0';
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true; f.title = v.title;
+    box.appendChild(f);
+  } else {
+    var m = document.createElement('video'); m.src = fileUrl(v.ref); m.controls = true; m.autoplay = true; m.playsInline = true;
+    box.appendChild(m);
+  }
+  $('pt').textContent = v.title; $('pc').textContent = v.champ || ''; $('pc').hidden = !v.champ; $('pd').textContent = v.desc || '';
+  $('dlg').showModal();
+}
+$('close').onclick = function () { $('dlg').close(); };
+$('dlg').addEventListener('close', function () { $('player').textContent = ''; });
+$('dlg').addEventListener('click', function (e) { if (e.target === $('dlg')) $('dlg').close(); });
+$('q').oninput = render;
+render();
+</script>
+</body>
+</html>
