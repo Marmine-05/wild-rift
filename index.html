@@ -138,6 +138,34 @@ footer{text-align:center;color:var(--mute);padding:24px;font-size:13px}
         top: 8px;
     }
 }
+  .tiktok-button {
+    position: fixed;
+    bottom: 22px;
+    left: 22px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 18px;
+    background: linear-gradient(135deg, #e52222, #ff6b35);
+    color: white;
+    text-decoration: none;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 14px;
+    box-shadow: 0 5px 18px rgba(220, 25, 25, .3);
+    z-index: 100;
+    transition: transform .2s, box-shadow .2s;
+}
+
+.tiktok-button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 22px rgba(220, 25, 25, .4);
+}
+
+.tiktok-button svg {
+    width: 22px;
+    height: 22px;
+}
 </style>
 </head>
 <body>
@@ -212,5 +240,15 @@ $('dlg').addEventListener('click', function (e) { if (e.target === $('dlg')) $('
 $('q').oninput = render;
 render();
 </script>
+  <a href="https://www.tiktok.com/@emeriakira"
+   class="tiktok-button"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="Visit my TikTok profile">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M19.6 7.1a6.2 6.2 0 0 1-4.1-1.6v8.1a5.5 5.5 0 1 1-5.5-5.5c.4 0 .8 0 1.2.1v3a2.5 2.5 0 1 0 1.3 2.2V2.5h3a6.1 6.1 0 0 0 4.1 4.1v.5z"/>
+    </svg>
+    <span>TikTok</span>
+</a>
 </body>
 </html>
