@@ -132,10 +132,26 @@ footer{text-align:center;color:var(--mute);padding:24px;font-size:13px}
 
 @media (max-width: 600px) {
     .caitlyn-art {
-        width: 55px;
-        height: 55px;
-        right: 10px;
+        width: 42px;
+        height: 42px;
         top: 8px;
+    }
+  .caitlyn-art:not(.caitlyn-left) {
+        right: 8px;
+    }
+  .caitlyn-left {
+        left: 8px;
+        right: auto;
+    }
+
+    h1 {
+        font-size: 27px;
+        max-width: 75%;
+        margin: 15px auto 0;
+    }
+
+    header {
+        padding-top: 65px;
     }
 }
   .tiktok-button {
