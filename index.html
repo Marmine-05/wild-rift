@@ -164,6 +164,70 @@ footer{text-align:center;color:var(--mute);padding:24px;font-size:13px}
     transform: scale(1.08);
     box-shadow: 0 0 22px rgba(217, 141, 169, .65);
 }
+  .caitlyn-interactive {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 40px auto 0;
+    position: relative;
+}
+
+.caitlyn-button {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    width: 180px;
+    height: 260px;
+    transition: transform .25s ease;
+}
+
+.caitlyn-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom;
+    display: block;
+}
+
+.caitlyn-button:hover {
+    transform: translateY(-6px);
+}
+
+.caitlyn-button:active {
+    transform: scale(.97);
+}
+
+.caitlyn-speech {
+    position: absolute;
+    top: -45px;
+    background: var(--card);
+    color: var(--ink);
+    border: 2px solid var(--line);
+    border-radius: 18px;
+    padding: 9px 17px;
+    font-weight: 800;
+    font-size: 14px;
+    box-shadow: var(--shadow);
+
+    opacity: 0;
+    transform: translateY(8px);
+    transition: .25s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.caitlyn-speech.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+    .caitlyn-button {
+        width: 145px;
+        height: 215px;
+    }
+}
 </style>
 </head>
 <body>
@@ -187,6 +251,23 @@ footer{text-align:center;color:var(--mute);padding:24px;font-size:13px}
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" hidden>No clips yet, check back soon 💖</div>
 </main>
+  <div class="caitlyn-interactive">
+    <button class="caitlyn-button" id="caitlynButton"
+            aria-label="Caitlyn says I'm on the case">
+        <img
+            src="https://wiki.leagueoflegends.com/en-us/images/thumb/Caitlyn_Render.png/410px-Caitlyn_Render.png?3c648"
+            alt="Caitlyn standing"
+        >
+    </button>
+
+    <div class="caitlyn-speech" id="caitlynSpeech">
+        I'm on the case.
+    </div>
+
+    <audio id="caitlynAudio" preload="auto">
+    <source src="./caitlyn.ogg" type="audio/ogg">
+</audio>
+</div>
 <footer>Made with 🩷 for Mary</footer>
 <dialog id="dlg"><div class="player" id="player"></div><div class="dinfo"><div><h3 id="pt"></h3><span class="tag" id="pc"></span><p id="pd"></p></div><button id="close">Close</button></div></dialog>
 
@@ -241,6 +322,25 @@ $('dlg').addEventListener('close', function () { $('player').textContent = ''; }
 $('dlg').addEventListener('click', function (e) { if (e.target === $('dlg')) $('dlg').close(); });
 $('q').oninput = render;
 render();
+  $('caitlynButton').onclick = function () {
+    var speech = $('caitlynSpeech');
+    var audio = $('caitlynAudio');
+
+    speech.classList.add('show');
+
+    audio.pause();
+    audio.currentTime = 0;
+
+    audio.play().catch(function (error) {
+        console.error('Caitlyn audio error:', error);
+    });
+
+    clearTimeout(window.caitlynTimer);
+
+    window.caitlynTimer = setTimeout(function () {
+        speech.classList.remove('show');
+    }, 2500);
+};
 </script>
 </body>
 </html>
